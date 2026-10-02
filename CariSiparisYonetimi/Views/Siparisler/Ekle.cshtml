@@ -25,7 +25,8 @@
             <label asp-for="SiparisTarihi" class="form-label"></label>
             <input asp-for="SiparisTarihi"
                    type="date"
-                   class="form-control" />
+                   class="form-control"
+                   max="@DateTime.Today.ToString("yyyy-MM-dd")" />
             <span asp-validation-for="SiparisTarihi"
                   class="text-danger"></span>
         </div>

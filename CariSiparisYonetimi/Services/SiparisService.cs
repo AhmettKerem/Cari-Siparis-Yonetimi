@@ -71,6 +71,13 @@ namespace CariSiparisYonetimi.Services
                     "Geçerli bir sipariş tarihi giriniz.");
             }
 
+            // Bugün ve geçmiş tarihler kabul edilir; gelecek tarihler engellenir.
+            if (model.SiparisTarihi.Date > DateTime.Today)
+            {
+                throw new ArgumentException(
+                    "Sipariş tarihi bugünden ileri olamaz.");
+            }
+
             if (model.Aciklama?.Length > 500)
             {
                 throw new ArgumentException(

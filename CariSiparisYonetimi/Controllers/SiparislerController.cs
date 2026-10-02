@@ -61,6 +61,14 @@ namespace CariSiparisYonetimi.Controllers
             [Bind("SiparisNo,SiparisTarihi,CariId,Aciklama,Detaylar")]
             SiparisEkleViewModel model)
         {
+
+            if (model.SiparisTarihi.Date > DateTime.Today)
+            {
+                ModelState.AddModelError(
+                    nameof(model.SiparisTarihi),
+                    "Sipariş tarihi bugünden ileri olamaz.");
+            }
+
             if (!ModelState.IsValid)
             {
                 await CariSecenekleriniDoldurAsync(model);

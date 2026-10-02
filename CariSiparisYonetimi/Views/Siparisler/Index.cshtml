@@ -1,0 +1,120 @@
+﻿@model List<CariSiparisYonetimi.Models.Siparis>
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Siparişler";
+
+    var turkceKultur = CultureInfo.GetCultureInfo("tr-TR");
+}
+
+<h2>Siparişler</h2>
+
+@if (TempData["Basari"] is string basariMesaji)
+{
+    <div class="alert alert-success" role="alert">
+        @basariMesaji
+    </div>
+}
+
+@if (TempData["Hata"] is string hataMesaji)
+{
+    <div class="alert alert-danger" role="alert">
+        @hataMesaji
+    </div>
+}
+
+<div class="mb-3">
+    <a asp-action="Ekle" class="btn btn-primary">
+        Yeni Sipariş
+    </a>
+
+    <a asp-controller="Cariler"
+       asp-action="Index"
+       class="btn btn-outline-secondary">
+        Carilere Git
+    </a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">
+        Henüz sipariş oluşturulmamış.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>Sipariş No</th>
+                    <th>Tarih</th>
+                    <th>Cari Adı</th>
+                    <th class="text-end">Toplam Tutar</th>
+                    <th>Durum</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var siparis in Model)
+                {
+                    var toplam = siparis.Detaylar.Sum(d => d.Tutar);
+
+                    <tr>
+                        <td>@siparis.SiparisNo</td>
+                        <td>
+                            @siparis.SiparisTarihi.ToString("dd.MM.yyyy")
+                        </td>
+                        <td>@siparis.Cari.CariAdi</td>
+                        <td class="text-end">
+                            @toplam.ToString("N2", turkceKultur) TL
+                        </td>
+
+                        @* Siparişin veritabanında tutulan iptal durumunu gösterir. *@
+                        <td>
+                            @if (siparis.IptalMi)
+                            {
+                                <span class="badge bg-danger">
+                                    İptal Edildi
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">
+                                    Aktif
+                                </span>
+                            }
+                        </td>
+
+                        <td>
+                            <a asp-action="Detay"
+                               asp-route-id="@siparis.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                Detay
+                            </a>
+
+                            @* İptal edilmemiş siparişler için onaylı POST isteği gönderir. *@
+                            @if (!siparis.IptalMi)
+                            {
+                                <form asp-controller="Siparisler"
+                                      asp-action="IptalEt"
+                                      asp-route-id="@siparis.Id"
+                                      method="post"
+                                      asp-antiforgery="true"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Bu siparişi iptal etmek istediğinize emin misiniz? İptal işlemi geri alınamaz.');">
+
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger">
+                                        İptal Et
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

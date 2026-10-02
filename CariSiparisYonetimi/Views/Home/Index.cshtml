@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div class="text-center mb-4">
+    <h1>Cari ve Sipariş Yönetimi</h1>
+    <p class="text-muted">
+        Cari kartlarınızı ve siparişlerinizi buradan yönetin.
+    </p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h3 class="card-title">Cariler</h3>
+
+                <p class="card-text">
+                    Cari kart oluşturun, bilgileri düzenleyin
+                    ve firma logolarını yönetin.
+                </p>
+
+                <a asp-controller="Cariler"
+                   asp-action="Index"
+                   class="btn btn-primary">
+                    Carilere Git
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h3 class="card-title">Siparişler</h3>
+
+                <p class="card-text">
+                    Yeni sipariş oluşturun, siparişleri listeleyin
+                    ve detaylarını görüntüleyin.
+                </p>
+
+                <a asp-controller="Siparisler"
+                   asp-action="Index"
+                   class="btn btn-success">
+                    Siparişlere Git
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,285 @@
+﻿@model CariSiparisYonetimi.ViewModels.SiparisEkleViewModel
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Sipariş Oluştur";
+}
+
+<h2>Sipariş Oluştur</h2>
+
+<form asp-controller="Siparisler" asp-action="Ekle" method="post"
+      id="siparisFormu">
+
+    <div asp-validation-summary="All"
+         class="text-danger mb-3"></div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="SiparisNo" class="form-label"></label>
+            <input asp-for="SiparisNo" class="form-control" />
+            <span asp-validation-for="SiparisNo"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="SiparisTarihi" class="form-label"></label>
+            <input asp-for="SiparisTarihi"
+                   type="date"
+                   class="form-control" />
+            <span asp-validation-for="SiparisTarihi"
+                  class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CariId" class="form-label"></label>
+
+        <select asp-for="CariId"
+                asp-items="Model.Cariler"
+                class="form-select">
+            <option value="">Cari seçiniz</option>
+        </select>
+
+        <span asp-validation-for="CariId"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Aciklama" class="form-label"></label>
+        <textarea asp-for="Aciklama"
+                  class="form-control"
+                  rows="3"></textarea>
+        <span asp-validation-for="Aciklama"
+              class="text-danger"></span>
+    </div>
+
+    <h4 class="mt-4">Ürün / Hizmet Satırları</h4>
+
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>Ürün / Hizmet Adı</th>
+                    <th>Miktar</th>
+                    <th>Birim Fiyat (TL)</th>
+                    <th>Tutar (TL)</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+
+            <tbody id="siparisSatirlari">
+                @for (var i = 0; i < Model.Detaylar.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <input asp-for="Detaylar[i].UrunHizmetAdi"
+                                   class="form-control"
+                                   data-alan="UrunHizmetAdi" />
+
+                            <span asp-validation-for="Detaylar[i].UrunHizmetAdi"
+                                  class="text-danger"></span>
+                        </td>
+
+                        <td>
+                            <input asp-for="Detaylar[i].Miktar"
+                                   type="text"
+                                   inputmode="decimal"
+                                   class="form-control miktar"
+                                   data-alan="Miktar" />
+
+                            <span asp-validation-for="Detaylar[i].Miktar"
+                                  class="text-danger"></span>
+                        </td>
+
+                        <td>
+                            <input asp-for="Detaylar[i].BirimFiyat"
+                                   type="text"
+                                   inputmode="decimal"
+                                   class="form-control birim-fiyat"
+                                   data-alan="BirimFiyat" />
+
+                            <span asp-validation-for="Detaylar[i].BirimFiyat"
+                                  class="text-danger"></span>
+                        </td>
+
+                        <td class="satir-tutari">0,00</td>
+
+                        <td>
+                            <button type="button"
+                                    class="btn btn-outline-danger satir-sil">
+                                Kaldır
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <button type="button"
+            id="satirEkle"
+            class="btn btn-outline-primary">
+        Satır Ekle
+    </button>
+
+    <div class="text-end mt-3">
+        <strong>
+            Genel Toplam:
+            <span id="genelToplam">0,00</span> TL
+        </strong>
+    </div>
+
+    <p class="text-muted mt-3">
+        Ondalık değerlerde
+        “@CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator”
+        ayırıcı kullanınız. Binlik ayırıcı kullanmayınız.
+    </p>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">
+            Siparişi Kaydet
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Listeye Dön
+        </a>
+    </div>
+</form>
+
+<template id="satirSablonu">
+    <tr>
+        <td>
+            <input type="text"
+                   class="form-control"
+                   data-alan="UrunHizmetAdi"
+                   maxlength="150"
+                   required />
+        </td>
+
+        <td>
+            <input type="text"
+                   inputmode="decimal"
+                   class="form-control miktar"
+                   data-alan="Miktar"
+                   value="1"
+                   required />
+        </td>
+
+        <td>
+            <input type="text"
+                   inputmode="decimal"
+                   class="form-control birim-fiyat"
+                   data-alan="BirimFiyat"
+                   value="0"
+                   required />
+        </td>
+
+        <td class="satir-tutari">0,00</td>
+
+        <td>
+            <button type="button"
+                    class="btn btn-outline-danger satir-sil">
+                Kaldır
+            </button>
+        </td>
+    </tr>
+</template>
+
+@section Scripts {
+    <script>
+        const satirlar = document.getElementById("siparisSatirlari");
+        const sablon = document.getElementById("satirSablonu");
+        const genelToplam = document.getElementById("genelToplam");
+
+        const paraFormati = new Intl.NumberFormat("tr-TR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        // Koleksiyon alanlarını kesintisiz indekslerle model binding'e uygun adlandırır.
+        function indeksleriGuncelle() {
+            satirlar.querySelectorAll("tr").forEach((satir, indeks) => {
+                satir.querySelectorAll("[data-alan]").forEach(input => {
+                    input.name = `Detaylar[${indeks}].${input.dataset.alan}`;
+                    input.id = `Detaylar_${indeks}__${input.dataset.alan}`;
+                });
+
+                satir.querySelectorAll("[data-valmsg-for]").forEach(span => {
+                    const alan = span.dataset.valmsgFor.split(".").pop();
+                    span.dataset.valmsgFor = `Detaylar[${indeks}].${alan}`;
+                });
+            });
+        }
+
+        // Binlik ayırıcı içermeyen ondalık girdiyi ekran hesabı için sayıya dönüştürür.
+        function sayiyaCevir(deger) {
+            const metin = deger.trim();
+
+            if (!/^\d+([.,]\d+)?$/.test(metin)) {
+                return null;
+            }
+
+            const sayi = Number(metin.replace(",", "."));
+
+            return Number.isFinite(sayi) ? sayi : null;
+        }
+
+        // Satır tutarlarını ve kullanıcıya gösterilen genel toplamı yeniden hesaplar.
+        function toplamlariGuncelle() {
+            let toplam = 0;
+
+            satirlar.querySelectorAll("tr").forEach(satir => {
+                const miktar = sayiyaCevir(
+                    satir.querySelector(".miktar").value);
+
+                const fiyat = sayiyaCevir(
+                    satir.querySelector(".birim-fiyat").value);
+
+                const tutarAlani = satir.querySelector(".satir-tutari");
+
+                if (miktar === null || fiyat === null) {
+                    tutarAlani.textContent = "—";
+                    return;
+                }
+
+                const tutar = miktar * fiyat;
+
+                tutarAlani.textContent = paraFormati.format(tutar);
+                toplam += tutar;
+            });
+
+            genelToplam.textContent = paraFormati.format(toplam);
+        }
+
+        document.getElementById("satirEkle")
+            .addEventListener("click", () => {
+                satirlar.appendChild(sablon.content.cloneNode(true));
+
+                indeksleriGuncelle();
+                toplamlariGuncelle();
+            });
+
+        satirlar.addEventListener("click", event => {
+            const buton = event.target.closest(".satir-sil");
+
+            if (!buton) {
+                return;
+            }
+
+            if (satirlar.querySelectorAll("tr").length <= 1) {
+                alert("Siparişte en az bir satır bulunmalıdır.");
+                return;
+            }
+
+            buton.closest("tr").remove();
+
+            indeksleriGuncelle();
+            toplamlariGuncelle();
+        });
+
+        satirlar.addEventListener("input", toplamlariGuncelle);
+
+        indeksleriGuncelle();
+        toplamlariGuncelle();
+    </script>
+}

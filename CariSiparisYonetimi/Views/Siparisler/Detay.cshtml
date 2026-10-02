@@ -1,0 +1,106 @@
+﻿@model CariSiparisYonetimi.Models.Siparis
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Sipariş Detayı";
+
+    var turkceKultur = CultureInfo.GetCultureInfo("tr-TR");
+    var genelToplam = Model.Detaylar.Sum(d => d.Tutar);
+}
+
+<h2>Sipariş Detayı</h2>
+
+@if (TempData["Basari"] is string basariMesaji)
+{
+    <div class="alert alert-success" role="alert">
+        @basariMesaji
+    </div>
+}
+
+<div class="card mb-4">
+    <div class="card-header">
+        Sipariş Üst Bilgileri
+    </div>
+
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Sipariş No</dt>
+            <dd class="col-sm-9">@Model.SiparisNo</dd>
+
+            <dt class="col-sm-3">Sipariş Tarihi</dt>
+            <dd class="col-sm-9">
+                @Model.SiparisTarihi.ToString("dd.MM.yyyy")
+            </dd>
+
+            <dt class="col-sm-3">Cari</dt>
+            <dd class="col-sm-9">
+                @Model.Cari.CariKodu - @Model.Cari.CariAdi
+            </dd>
+
+            <dt class="col-sm-3">Açıklama</dt>
+            <dd class="col-sm-9">
+                @(string.IsNullOrWhiteSpace(Model.Aciklama)
+                                ? "Açıklama bulunmuyor."
+                                : Model.Aciklama)
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<h4>Ürün / Hizmet Satırları</h4>
+
+<div class="table-responsive">
+    <table class="table table-bordered align-middle">
+        <thead>
+            <tr>
+                <th>Ürün / Hizmet Adı</th>
+                <th class="text-end">Miktar</th>
+                <th class="text-end">Birim Fiyat</th>
+                <th class="text-end">Tutar</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var detay in Model.Detaylar)
+            {
+                <tr>
+                    <td>@detay.UrunHizmetAdi</td>
+
+                    <td class="text-end">
+                        @detay.Miktar.ToString("0.###", turkceKultur)
+                    </td>
+
+                    <td class="text-end">
+                        @detay.BirimFiyat.ToString("N2", turkceKultur) TL
+                    </td>
+
+                    <td class="text-end">
+                        @detay.Tutar.ToString("N2", turkceKultur) TL
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th colspan="3" class="text-end">
+                    Genel Toplam
+                </th>
+
+                <th class="text-end">
+                    @genelToplam.ToString("N2", turkceKultur) TL
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">
+        Sipariş Listesine Dön
+    </a>
+
+    <a asp-action="Ekle" class="btn btn-primary">
+        Yeni Sipariş
+    </a>
+</div>

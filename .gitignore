@@ -1,0 +1,47 @@
+# Derleme çıktıları
+[Bb]in/
+[Oo]bj/
+artifacts/
+
+# Visual Studio ve kişisel ayarlar
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Yayınlama sırasında oluşan dosyalar ve profiller
+publish/
+*.pubxml
+*.publishsettings
+
+# Loglar ve geçici dosyalar
+[Ll]ogs/
+*.log
+*.tmp
+*.temp
+*.cache
+
+# Yerel veritabanı dosyaları ve yedekleri
+*.mdf
+*.ldf
+*.ndf
+*.bak
+
+# Yerel gizli ayarlar ve sertifikalar
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+appsettings.*.Local.json
+*.pfx
+*.p12
+
+# Kullanıcı tarafından yüklenen logolar
+**/wwwroot/logos/*
+!**/wwwroot/logos/.gitkeep
+
+# İşletim sistemi dosyaları
+Thumbs.db
+Desktop.ini
+.DS_Store

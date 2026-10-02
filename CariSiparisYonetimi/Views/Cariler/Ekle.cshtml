@@ -1,0 +1,82 @@
+﻿@model CariSiparisYonetimi.Models.Cari
+
+@{
+    ViewData["Title"] = "Yeni Cari";
+}
+
+<h1>Yeni Cari</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="Cariler" asp-action="Ekle" method="post">
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="CariKodu" class="form-label">
+                    Cari Kodu
+                </label>
+                <input asp-for="CariKodu" class="form-control" />
+                <span asp-validation-for="CariKodu"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CariAdi" class="form-label">
+                    Cari Adı / Firma Adı
+                </label>
+                <input asp-for="CariAdi" class="form-control" />
+                <span asp-validation-for="CariAdi"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="VergiNumarasi" class="form-label">
+                    Vergi Numarası
+                </label>
+                <input asp-for="VergiNumarasi" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Telefon" class="form-label">
+                    Telefon
+                </label>
+                <input asp-for="Telefon"
+                       type="tel"
+                       class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Eposta" class="form-label">
+                    E-posta
+                </label>
+                <input asp-for="Eposta"
+                       type="email"
+                       class="form-control" />
+                <span asp-validation-for="Eposta"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Adres" class="form-label">
+                    Adres
+                </label>
+                <textarea asp-for="Adres"
+                          class="form-control"
+                          rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Kaydet
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary">
+                Listeye Dön
+            </a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,92 @@
+﻿@model CariSiparisYonetimi.ViewModels.LogoYukleViewModel
+
+@{
+    var logoVar = !string.IsNullOrWhiteSpace(Model.MevcutLogoYolu);
+
+    ViewData["Title"] = logoVar ? "Logoyu Değiştir" : "Logo Yükle";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <strong>Cari:</strong> @Model.CariAdi
+</p>
+
+@if (TempData["Basari"] is string basariMesaji)
+{
+    <div class="alert alert-success" role="alert">
+        @basariMesaji
+    </div>
+}
+
+@if (TempData["Hata"] is string hataMesaji)
+{
+    <div class="alert alert-danger" role="alert">
+        @hataMesaji
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+
+        @if (logoVar)
+        {
+            <div class="mb-4">
+                <p class="fw-semibold">Mevcut logo</p>
+
+                <img src="@Model.MevcutLogoYolu"
+                     alt="@(Model.CariAdi + " logosu")"
+                     class="img-thumbnail"
+                     style="width: 200px; height: 150px; object-fit: contain;" />
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                Bu cari için henüz logo yüklenmemiş.
+            </div>
+        }
+
+        <form asp-controller="Cariler"
+              asp-action="LogoYukle"
+              asp-route-id="@Model.CariId"
+              method="post"
+              enctype="multipart/form-data">
+
+            <input asp-for="CariId" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="LogoDosyasi" class="form-label">
+                    @(logoVar ? "Yeni logo dosyası" : "Logo dosyası")
+                </label>
+
+                <input asp-for="LogoDosyasi"
+                       type="file"
+                       accept=".jpg,.jpeg,.png"
+                       class="form-control" />
+
+                <span asp-validation-for="LogoDosyasi"
+                      class="text-danger"></span>
+
+                <div class="form-text">
+                    JPG veya PNG seçiniz. En fazla 2 MB.
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                @(logoVar ? "Logoyu Değiştir" : "Yükle")
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary">
+                Listeye Dön
+            </a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
